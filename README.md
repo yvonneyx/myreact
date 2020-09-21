@@ -1,5 +1,17 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Git pull&push
+
+```
+npm run build
+git add .
+git commit -m "xxxx"
+git remote add origin git@github.com:yvonneyx/myreact.git
+git branch -M master
+git pull origin master
+git push -u origin master
+```
+
 ## Available Scripts
 
 In the project directory, you can run:
