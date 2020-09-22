@@ -1,13 +1,12 @@
 import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom'
-import logo from './logo.svg';
-import { Button } from 'antd';
 import 'antd/dist/antd.css';
 import './App.css';
 import { adminRoutes } from './routes';
-import Frame from './components/Frame/index';
+import Frame from './components/Frame/Index';
 
 function App() {
+ 
   return (
     <Frame>
       <Switch>
