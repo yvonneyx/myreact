@@ -1,50 +1,84 @@
-import React from 'react'
-import { withRouter } from 'react-router-dom';
-import { Layout, Menu } from 'antd';
-import { adminRoutes } from "../../routes"
-import ebay from './ebay.png';
+import React from "react";
+import { withRouter } from "react-router-dom";
+import { Layout, Menu, Dropdown, Avatar, message } from "antd";
+import { adminRoutes } from "../../routes";
+import ebay from "./ebay.png";
+import { DownOutlined } from "@ant-design/icons";
+import "./frame.css";
+import { clearToken } from "../../utils/auth";
 const { Header, Content, Sider } = Layout;
 
-const routes = adminRoutes.filter(route => route.isShow);
+const routes = adminRoutes.filter((route) => route.isShow);
+
 function Index(props) {
-	return (
-		<Layout>
-			<Header className="header" style={{ backgroundColor: '#333' }}>
-				<div className="logo">
-					<img src={ebay} alt="logo" style={{ height: "32px" }} />
-				</div>
-			</Header>
-			<Layout>
-				<Sider width={200} style={{ background: '#fff' }}>
-					<Menu
-						mode="inline"
-						defaultSelectedKeys={['1']}
-						defaultOpenKeys={['sub1']}
-						style={{ height: '100%', borderRight: 0 }}
-					>
-						{routes.map(route => {
-							return (
-								<Menu.Item key={route.key} icon={route.icon} onClick={() => props.history.push(route.path)}>
-									{route.title}</Menu.Item>
-							)
-						})}
-					</Menu>
-				</Sider>
-				<Layout style={{ padding: '16px' }}>
-					<Content
-						style={{
-							background: '#fff',
-							padding: 24,
-							margin: 0,
-							minHeight: 280,
-						}}
-					>
-						{props.children}
-					</Content>
-				</Layout>
-			</Layout>
-		</Layout>
-	)
+  const popMenu = (
+    <Menu
+      onClick={(p) => {
+        if (p.key === "logout") {
+          clearToken();
+          props.history.push("/login");
+        } else {
+          message.info(p.key);
+        }
+      }}
+    >
+      <Menu.Item key="notification">Notification</Menu.Item>
+      <Menu.Item key="setting">Setting</Menu.Item>
+      <Menu.Item key="logout">Log out</Menu.Item>
+    </Menu>
+  );
+  return (
+    <Layout>
+      <Header className="header">
+        <div className="logo">
+          <img src={ebay} alt="logo" style={{ height: "32px" }} />
+        </div>
+        <Dropdown overlay={popMenu}>
+          <div>
+            <Avatar style={{ color: "#fff", backgroundColor: "#0cb4b3" }}>
+              U
+            </Avatar>
+            <span> Super Admin</span>
+            <DownOutlined />
+          </div>
+        </Dropdown>
+      </Header>
+      <Layout>
+        <Sider width={200} style={{ background: "#fff" }}>
+          <Menu
+            mode="inline"
+            defaultSelectedKeys={["1"]}
+            defaultOpenKeys={["sub1"]}
+            style={{ height: "100%", borderRight: 0 }}
+          >
+            {routes.map((route) => {
+              return (
+                <Menu.Item
+                  key={route.key}
+                  icon={route.icon}
+                  onClick={() => props.history.push(route.path)}
+                >
+                  {route.title}
+                </Menu.Item>
+              );
+            })}
+          </Menu>
+        </Sider>
+        <Layout style={{ padding: "16px" }}>
+          <Content
+            style={{
+              background: "#fff",
+              padding: 24,
+              margin: 0,
+              minHeight: 280,
+            }}
+          >
+            {props.children}
+          </Content>
+        </Layout>
+      </Layout>
+    </Layout>
+  );
 }
 
-export default withRouter(Index)
+export default withRouter(Index);

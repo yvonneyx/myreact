@@ -1,0 +1,7 @@
+.loginCard {
+  width: 40%;
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate3d(-50%, -50%, 0);
+}
