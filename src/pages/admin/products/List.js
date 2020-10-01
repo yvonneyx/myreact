@@ -1,35 +1,37 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, Button, Table, Popconfirm, message } from "antd";
 import { listApi } from "../../../services/products";
 
-const dataSource = [
-  {
-    id: 1,
-    name: "soap",
-    price: 5,
-  },
-  {
-    id: 2,
-    name: "milk",
-    price: 6,
-  },
-  {
-    id: 3,
-    name: "noodle",
-    price: 3,
-  },
-];
+// const dataSource = [
+//   {
+//     id: 1,
+//     name: "soap",
+//     price: 5,
+//   },
+//   {
+//     id: 2,
+//     name: "milk",
+//     price: 6,
+//   },
+//   {
+//     id: 3,
+//     name: "noodle",
+//     price: 3,
+//   },
+// ];
 
 function List(props) {
+  //定义局部状态
+  const [dataSource, setDataSource] = useState([]);
   useEffect(() => {
     listApi().then((res) => {
-      console.log(res);
+      setDataSource(res.products);
     });
   }, []);
   const columns = [
     {
       title: "No.",
-      key: "id",
+      key: "_id",
       width: 80,
       align: "center",
       render: (txt, record, index) => index + 1,
@@ -47,7 +49,14 @@ function List(props) {
       render: (txt, recoed, index) => {
         return (
           <div>
-            <Button type="primary" size="small">
+            <Button
+              type="primary"
+              size="small"
+              onClick={() => {
+				  //跳转到edit页面，传递id为参数
+                props.history.push(`/admin/products/edit/${recoed._id}`);
+              }}
+            >
               Edit
             </Button>
             <Popconfirm
@@ -81,7 +90,7 @@ function List(props) {
       }
     >
       <Table
-        rowKey={(record) => record.id}
+        rowKey={(record) => record._id}
         columns={columns}
         bordered
         dataSource={dataSource}

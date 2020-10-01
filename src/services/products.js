@@ -17,6 +17,14 @@ export function createApi(data) {
 }
 
 /**
+ * 根据 ID 获取商品信息
+ * @param {*} id 
+ */
+export function getOneById(id){
+	return get(`/api/v1/admin/products/${id}`)
+}
+
+/**
  * 修改数据
  * @param {*} id
  * @param {*} data
