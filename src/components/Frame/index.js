@@ -31,7 +31,7 @@ function Index(props) {
     <Layout>
       <Header className="header">
         <div className="logo">
-          <img src={ebay} alt="logo" style={{ height: "32px" }} />
+          <img src={ebay} alt="logo" style={{ height: "32px" }} key="logo" />
         </div>
         <Dropdown overlay={popMenu}>
           <div>

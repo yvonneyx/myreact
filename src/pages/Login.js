@@ -1,6 +1,7 @@
 import React from "react";
-import { Form, Input, Button, Checkbox, Card } from "antd";
+import { Form, Input, Button, Checkbox, Card, message } from "antd";
 import "./login.css";
+import { loginApi } from "../services/auth";
 import { setToken } from "../utils/auth";
 
 const layout = {
@@ -15,8 +16,26 @@ const tailLayout = {
 function Login(props) {
   const onFinish = (values) => {
     console.log("Received values of form:", values);
-	setToken(values.username);
-    props.history.push("/admin/dashboard");
+    // setToken(values.username);
+    // props.history.push("/admin/dashboard");
+    loginApi({
+      userName: values.username,
+      password: values.password,
+    })
+      .then((res) => {
+        const { code, token } = res;
+        if (code === "success") {
+          message.success('登录成功.')
+          setToken(token);
+          props.history.push("/admin/dashboard");
+        } else {
+          message.info(res.message);
+        }
+      })
+      .catch((err) => {
+        // console.log(err);
+        message.error("用户不存在.");
+      });
   };
 
   const onFinishFailed = (errorInfo) => {
