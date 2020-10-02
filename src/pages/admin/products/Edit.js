@@ -16,12 +16,12 @@ function Edit(props) {
   const [form] = Form.useForm();
   const [currentData, setCurrentData] = useState({});
   //初始化的时候执行
+
   useEffect(() => {
     if (props.match.params.id) {
       getOneById(props.match.params.id).then((res) => {
-		console.log(res);
         setCurrentData(res);
-        // console.log(currentData);
+        console.log(currentData);
       });
     }
   }, []);
@@ -74,7 +74,7 @@ function Edit(props) {
           {...formItemLayout}
           name="price"
           label="Price"
-          initialValue="2"
+          initialValue={{ currentData }}
           rules={[
             {
               required: true,

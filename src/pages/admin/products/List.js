@@ -1,40 +1,38 @@
 import React, { useEffect, useState } from "react";
 import { Card, Button, Table, Popconfirm, message } from "antd";
-import { listApi } from "../../../services/products";
-
-// const dataSource = [
-//   {
-//     id: 1,
-//     name: "soap",
-//     price: 5,
-//   },
-//   {
-//     id: 2,
-//     name: "milk",
-//     price: 6,
-//   },
-//   {
-//     id: 3,
-//     name: "noodle",
-//     price: 3,
-//   },
-// ];
+import { listApi, deleteOne } from "../../../services/products";
 
 function List(props) {
   //定义局部状态
   const [dataSource, setDataSource] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(1);
+
   useEffect(() => {
     listApi().then((res) => {
       setDataSource(res.products);
+      setTotal(res.totalCount);
     });
   }, []);
+
+  const per = 5;
+
+  const loadData = (page, per) => {
+    listApi(page, per).then((res) => {
+      setDataSource(res.products);
+      setCurrentIndex(page);
+    });
+  };
+
   const columns = [
     {
       title: "No.",
       key: "_id",
       width: 80,
       align: "center",
-      render: (txt, record, index) => index + 1,
+      render: (txt, record, index) => {
+        return <span>{(currentIndex - 1) * per + (index + 1)}</span>;
+      },
     },
     {
       title: "Name",
@@ -46,15 +44,15 @@ function List(props) {
     },
     {
       title: "Operation",
-      render: (txt, recoed, index) => {
+      render: (txt, record, index) => {
         return (
           <div>
             <Button
               type="primary"
               size="small"
               onClick={() => {
-				  //跳转到edit页面，传递id为参数
-                props.history.push(`/admin/products/edit/${recoed._id}`);
+                //跳转到edit页面，传递id为参数
+                props.history.push(`/admin/products/edit/${record._id}`);
               }}
             >
               Edit
@@ -62,10 +60,14 @@ function List(props) {
             <Popconfirm
               title="Are you sure to delete this item?"
               onCancel={() => message.info("Cancel operation")}
-              onSubmit={
-                () => console.log("Yes")
-                //api
-              }
+              onConfirm={() => {
+                deleteOne(record._id)
+                  .then((res) => {
+                    loadData(1, per);
+                    message.success("Delete success.");
+                  })
+                  .catch((err) => console.log(err));
+              }}
             >
               <Button type="danger" size="small" style={{ margin: "0 1rem" }}>
                 Delete
@@ -94,6 +96,11 @@ function List(props) {
         columns={columns}
         bordered
         dataSource={dataSource}
+        pagination={{
+          total,
+          defaultPageSize: per,
+          onChange: loadData,
+        }}
       />
     </Card>
   );
