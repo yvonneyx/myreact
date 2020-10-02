@@ -13,18 +13,18 @@ const formTailLayout = {
 
 function Edit(props) {
   //props.match.params.id 存在的话表示修改，否则为新增
+  console.log(props);
   const [form] = Form.useForm();
-  const [currentData, setCurrentData] = useState({});
   //初始化的时候执行
-
+  const [currentData, setCurrentData] = useState([]);
   useEffect(() => {
+    // const { name, price } = currentData;
     if (props.match.params.id) {
       getOneById(props.match.params.id).then((res) => {
         setCurrentData(res);
-        console.log(currentData);
       });
     }
-  }, []);
+  }, [props.match.params.id]);
 
   const onCheck = async () => {
     try {
@@ -54,6 +54,9 @@ function Edit(props) {
       }
     });
   };
+
+  form.setFieldsValue({ ...currentData });
+
   return (
     <Card title="Edit">
       <Form form={form} onFinish={onFinish}>
@@ -61,6 +64,7 @@ function Edit(props) {
           {...formItemLayout}
           name="name"
           label="Name"
+          key="name"
           rules={[
             {
               required: true,
@@ -74,7 +78,7 @@ function Edit(props) {
           {...formItemLayout}
           name="price"
           label="Price"
-          initialValue={{ currentData }}
+          key="price"
           rules={[
             {
               required: true,
