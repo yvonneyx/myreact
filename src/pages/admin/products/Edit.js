@@ -3,10 +3,18 @@ import { Form, Card, Input, Button, Upload } from "antd";
 import { createApi, getOneById } from "../../../services/products";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import { serverUrl } from "../../../utils/config";
+import BraftEditor from "braft-editor";
+import "braft-editor/dist/index.css";
+import "./edit.css";
 
 const formItemLayout = {
   labelCol: { span: 4 },
   wrapperCol: { span: 8 },
+};
+
+const formEditorItemLayout = {
+  labelCol: { span: 4 },
+  wrapperCol: { span: 16 },
 };
 
 const formTailLayout = {
@@ -22,13 +30,16 @@ function Edit(props) {
   const [currentData, setCurrentData] = useState([]);
   const [imageUrl, setImageUrl] = useState("");
   const [loading, setLoading] = useState(false);
-
+  const [editorState, setEditorState] = useState(
+    BraftEditor.createEditorState("")
+  );
   useEffect(() => {
     // const { name, price } = currentData;
     if (props.match.params.id) {
       getOneById(props.match.params.id).then((res) => {
         setCurrentData(res);
         setImageUrl(res.coverImg);
+        setEditorState(BraftEditor.createEditorState(res.content));
       });
     }
   }, [props.match.params.id]);
@@ -53,12 +64,21 @@ function Edit(props) {
     }
   };
 
+  //富文本编辑器
+  const handleEditorChange = (v) => {
+    setEditorState(v);
+  };
+
   const onCheck = async () => {
     try {
       const values = await form.validateFields();
-      //   console.log("Success:", values);
-      console.log(values);
-      createApi({ ...values, coverImg: imageUrl })
+      // console.log(values);
+      // editorState.toHTML() 获取富文本编辑器内容
+      createApi({
+        ...values,
+        coverImg: imageUrl,
+        content: editorState.toHTML(),
+      })
         .then((res) => {
           props.history.push("/admin/products");
         })
@@ -87,10 +107,19 @@ function Edit(props) {
   form.setFieldsValue({ ...currentData });
 
   return (
-    <Card title="Edit">
-      <Form form={form} onFinish={onFinish}>
+    <Card
+      title="Edit"
+      extra={
+        <Button
+          type="primary"
+          onClick={() => props.history.push("/admin/products")}
+        >
+          Back
+        </Button>
+      }
+    >
+      <Form form={form} onFinish={onFinish} {...formItemLayout}>
         <Form.Item
-          {...formItemLayout}
           name="name"
           label="Name"
           key="name"
@@ -117,7 +146,7 @@ function Edit(props) {
         >
           <Input placeholder="Please input product price." />
         </Form.Item>
-        <Form.Item name="Photo" label="Photo" {...formItemLayout}>
+        <Form.Item name="photo" label="Photo">
           <Upload
             name="file"
             listType="picture-card"
@@ -136,6 +165,12 @@ function Edit(props) {
               uploadButton
             )}
           </Upload>
+        </Form.Item>
+        <Form.Item label="Details" {...formEditorItemLayout}>
+          <BraftEditor
+            value={editorState}
+            onChange={(e) => handleEditorChange(e)}
+          />
         </Form.Item>
         <Form.Item {...formTailLayout}>
           <Button htmlType="submit" type="primary" onClick={onCheck}>

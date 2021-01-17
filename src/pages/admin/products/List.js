@@ -118,7 +118,6 @@ function List(props) {
       extra={
         <Button
           type="primary"
-          size="small"
           onClick={() => props.history.push("/admin/products/edit")}
         >
           Add
