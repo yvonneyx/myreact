@@ -1,5 +1,6 @@
 import React from "react";
 import { Card, List, Typography, Button } from "antd";
+import { connect } from "react-redux";
 
 const data = [
   "Racing car sprays burning fuel into crowd.",
@@ -9,20 +10,27 @@ const data = [
   "Los Angeles battles huge wildfires.",
 ];
 
-function Notice() {
+function Notice(props) {
   return (
-    <Card title="Notification Center" extra={<Button>Mark all as read</Button>}>
+    <Card
+      title="Notification Center"
+      extra={
+        !props.isAllRead && (
+          <Button onClick={() => props.dispatch({ type: "READ_ALL" })}>
+            Mark all as read
+          </Button>
+        )
+      }
+    >
       <List
         header={<div>Header</div>}
         footer={<div>Footer</div>}
         bordered
         dataSource={data}
         renderItem={(item) => (
-          <List.Item style={{display:'flex', alignContent:'space-between'}}>
+          <List.Item style={{ display: "flex", alignContent: "space-between" }}>
             <Typography.Text mark>[ITEM]</Typography.Text> {item}
-            <Button size="small" style={{ float: "right" }}>
-              Mark as read
-            </Button>
+            <Button size="small">Mark as read</Button>
           </List.Item>
         )}
       />
@@ -30,4 +38,4 @@ function Notice() {
   );
 }
 
-export default Notice;
+export default connect((state) => state)(Notice);

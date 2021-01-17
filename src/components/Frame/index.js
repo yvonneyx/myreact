@@ -1,6 +1,7 @@
 import React from "react";
 import { withRouter } from "react-router-dom";
 import { Layout, Menu, Dropdown, Avatar, message, Badge } from "antd";
+import {connect} from 'react-redux';
 import { adminRoutes } from "../../routes";
 import ebay from "./ebay.png";
 import { DownOutlined } from "@ant-design/icons";
@@ -11,6 +12,7 @@ const { Header, Content, Sider } = Layout;
 const routes = adminRoutes.filter((route) => route.isShow);
 
 function Index(props) {
+  console.log(props);
   const popMenu = (
     <Menu
       onClick={(p) => {
@@ -40,7 +42,7 @@ function Index(props) {
             <Avatar style={{ color: "#fff", backgroundColor: "#0cb4b3" }}>
               U
             </Avatar>
-            <Badge dot>
+            <Badge dot={!props.isAllRead}>
               <span> Super Admin</span>
             </Badge>
             <DownOutlined />
@@ -84,5 +86,6 @@ function Index(props) {
     </Layout>
   );
 }
+const mapStateToProps = state => state;
 
-export default withRouter(Index);
+export default connect(mapStateToProps)(withRouter(Index));
