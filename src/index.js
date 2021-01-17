@@ -8,13 +8,13 @@ import {
 } from "react-router-dom";
 import { Provider } from "react-redux";
 import "./index.css";
-import store from "./store";
+import rootReducer from "./store/index";
 import { mainRoutes } from "./routes";
 import * as serviceWorker from "./serviceWorker";
 import App from "./App";
 
 ReactDOM.render(
-  <Provider store={store}>
+  <Provider store={rootReducer}>
     <Router>
       <Switch>
         <Route

@@ -1,16 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { Card, Button, Table, Popconfirm, message } from "antd";
+import { connect } from "react-redux";
+import { loadProduct } from "../../../store/actions/product";
 import { listApi, deleteOne, modifyOne } from "../../../services/products";
 import { serverUrl } from "../../../utils/config";
 import "./list.css";
 
 function List(props) {
+  console.log(props);
+
   //定义局部状态
   const [dataSource, setDataSource] = useState([]);
   const [total, setTotal] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
+    // props.dispatch(loadProduct({
+    //   page:2,
+    //   name:'小米'
+    // }));
     listApi().then((res) => {
       setDataSource(res.products);
       setTotal(res.totalCount);
@@ -140,4 +148,4 @@ function List(props) {
   );
 }
 
-export default List;
+export default connect((state) => state)(List);

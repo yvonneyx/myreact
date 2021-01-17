@@ -1,7 +1,7 @@
 import React from "react";
 import { withRouter } from "react-router-dom";
 import { Layout, Menu, Dropdown, Avatar, message, Badge } from "antd";
-import {connect} from 'react-redux';
+import { connect } from "react-redux";
 import { adminRoutes } from "../../routes";
 import ebay from "./ebay.png";
 import { DownOutlined } from "@ant-design/icons";
@@ -42,7 +42,7 @@ function Index(props) {
             <Avatar style={{ color: "#fff", backgroundColor: "#0cb4b3" }}>
               U
             </Avatar>
-            <Badge dot={!props.isAllRead}>
+            <Badge dot={!props.notice.isAllRead}>
               <span> Super Admin</span>
             </Badge>
             <DownOutlined />
@@ -86,6 +86,6 @@ function Index(props) {
     </Layout>
   );
 }
-const mapStateToProps = state => state;
+const mapStateToProps = (state) => state;
 
 export default connect(mapStateToProps)(withRouter(Index));

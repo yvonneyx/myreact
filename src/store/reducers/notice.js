@@ -1,6 +1,4 @@
-import { createStore } from "redux";
-
-const notices = (
+export default (
   state = { isAllRead: false, count: 8 },
   action
 ) => {
@@ -11,7 +9,3 @@ const notices = (
       return state;
   }
 };
-
-const store = createStore(notices);
-
-export default store;
