@@ -1,6 +1,6 @@
 import React from "react";
 import { withRouter } from "react-router-dom";
-import { Layout, Menu, Dropdown, Avatar, message } from "antd";
+import { Layout, Menu, Dropdown, Avatar, message, Badge } from "antd";
 import { adminRoutes } from "../../routes";
 import ebay from "./ebay.png";
 import { DownOutlined } from "@ant-design/icons";
@@ -17,6 +17,8 @@ function Index(props) {
         if (p.key === "logout") {
           clearToken();
           props.history.push("/login");
+        } else if ((p.key = "notification")) {
+          props.history.push("/admin/notices");
         } else {
           message.info(p.key);
         }
@@ -38,7 +40,9 @@ function Index(props) {
             <Avatar style={{ color: "#fff", backgroundColor: "#0cb4b3" }}>
               U
             </Avatar>
-            <span> Super Admin</span>
+            <Badge dot>
+              <span> Super Admin</span>
+            </Badge>
             <DownOutlined />
           </div>
         </Dropdown>
