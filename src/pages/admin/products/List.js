@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Card, Button, Table, Popconfirm, message } from "antd";
-import { listApi, deleteOne } from "../../../services/products";
+import { listApi, deleteOne, modifyOne } from "../../../services/products";
+import { serverUrl } from "../../../utils/config";
+import "./list.css";
 
 function List(props) {
   //定义局部状态
   const [dataSource, setDataSource] = useState([]);
   const [total, setTotal] = useState(0);
-  const [currentIndex, setCurrentIndex] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     listApi().then((res) => {
@@ -15,12 +17,12 @@ function List(props) {
     });
   }, []);
 
-  const per = 5;
+  const per = 2;
 
   const loadData = (page, per) => {
     listApi(page, per).then((res) => {
       setDataSource(res.products);
-      setCurrentIndex(page);
+      setCurrentPage(page);
     });
   };
 
@@ -31,7 +33,7 @@ function List(props) {
       width: 80,
       align: "center",
       render: (txt, record, index) => {
-        return <span>{(currentIndex - 1) * per + (index + 1)}</span>;
+        return <span>{(currentPage - 1) * per + (index + 1)}</span>;
       },
     },
     {
@@ -39,8 +41,27 @@ function List(props) {
       dataIndex: "name",
     },
     {
+      title: "Photo",
+      dataIndex: "coverImg",
+      render: (txt, record) =>
+        record.coverImg ? (
+          <img
+            src={serverUrl + record.coverImg}
+            alt={record.name}
+            style={{ width: "120px" }}
+          />
+        ) : (
+          "Not set"
+        ),
+    },
+    {
       title: "Price",
       dataIndex: "price",
+    },
+    {
+      title: "On Sale",
+      dataIndex: "onSale",
+      render: (txt, record) => (record.onSale ? "On Sale" : "Out of Stock"),
     },
     {
       title: "Operation",
@@ -63,7 +84,7 @@ function List(props) {
               onConfirm={() => {
                 deleteOne(record._id)
                   .then((res) => {
-                    loadData(1, per);
+                    loadData(currentPage, per);
                     message.success("Delete success.");
                   })
                   .catch((err) => console.log(err));
@@ -73,6 +94,19 @@ function List(props) {
                 Delete
               </Button>
             </Popconfirm>
+            <Button
+              size="small"
+              onClick={() => {
+                modifyOne(record._id, { onSale: !record.onSale }).then(
+                  (res) => {
+                    loadData(currentPage, per);
+                  }
+                );
+                console.log("Change stock status");
+              }}
+            >
+              {record.onSale ? "Out of Stock" : "In Stock"}
+            </Button>
           </div>
         );
       },
@@ -93,6 +127,7 @@ function List(props) {
     >
       <Table
         rowKey={(record) => record._id}
+        rowClassName={(record) => (record.onSale ? "" : "bg_red")}
         columns={columns}
         bordered
         dataSource={dataSource}
