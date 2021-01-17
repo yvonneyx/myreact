@@ -7,31 +7,35 @@ import { serverUrl } from "../../../utils/config";
 import "./list.css";
 
 function List(props) {
-  console.log(props);
-
+  const { list, page, total } = props || {};
+  const per = 5;
   //定义局部状态
-  const [dataSource, setDataSource] = useState([]);
-  const [total, setTotal] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
+  // const [dataSource, setDataSource] = useState([]);
+  // const [total, setTotal] = useState(0);
+  // const [currentPage, setCurrentPage] = useState(1);
 
+  const asyncLoadProduct = (page)=>{
+    props.dispatch(
+      loadProduct({
+        page,
+      })
+    );
+  }
   useEffect(() => {
-    // props.dispatch(loadProduct({
-    //   page:2,
-    //   name:'小米'
-    // }));
-    listApi().then((res) => {
-      setDataSource(res.products);
-      setTotal(res.totalCount);
-    });
+    asyncLoadProduct(1);
+    // listApi().then((res) => {
+    //   setDataSource(res.products);
+    //   setTotal(res.totalCount);
+    // });
   }, []);
 
-  const per = 2;
 
   const loadData = (page, per) => {
-    listApi(page, per).then((res) => {
-      setDataSource(res.products);
-      setCurrentPage(page);
-    });
+    asyncLoadProduct(page);
+    // listApi(page, per).then((res) => {
+    //   setDataSource(res.products);
+    //   setCurrentPage(page);
+    // });
   };
 
   const columns = [
@@ -41,7 +45,8 @@ function List(props) {
       width: 80,
       align: "center",
       render: (txt, record, index) => {
-        return <span>{(currentPage - 1) * per + (index + 1)}</span>;
+        console.log(page);
+        return <span>{(page - 1) * per + (index + 1)}</span>;
       },
     },
     {
@@ -92,7 +97,8 @@ function List(props) {
               onConfirm={() => {
                 deleteOne(record._id)
                   .then((res) => {
-                    loadData(currentPage, per);
+                    // loadData(currentPage, per);
+                    loadData(page);
                     message.success("Delete success.");
                   })
                   .catch((err) => console.log(err));
@@ -107,7 +113,8 @@ function List(props) {
               onClick={() => {
                 modifyOne(record._id, { onSale: !record.onSale }).then(
                   (res) => {
-                    loadData(currentPage, per);
+                    // loadData(currentPage, per);
+                    loadData(page, per);
                   }
                 );
                 console.log("Change stock status");
@@ -137,7 +144,8 @@ function List(props) {
         rowClassName={(record) => (record.onSale ? "" : "bg_red")}
         columns={columns}
         bordered
-        dataSource={dataSource}
+        // dataSource={dataSource}
+        dataSource={list}
         pagination={{
           total,
           defaultPageSize: per,
@@ -148,4 +156,4 @@ function List(props) {
   );
 }
 
-export default connect((state) => state)(List);
+export default connect((state) => state.product)(List);

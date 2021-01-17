@@ -12,7 +12,6 @@ const { Header, Content, Sider } = Layout;
 const routes = adminRoutes.filter((route) => route.isShow);
 
 function Index(props) {
-  console.log(props);
   const popMenu = (
     <Menu
       onClick={(p) => {
