@@ -3,7 +3,7 @@ import { Switch, Route, Redirect } from "react-router-dom";
 import "antd/dist/antd.css";
 import "./App.css";
 import { adminRoutes } from "./routes";
-import Frame from "./components/Frame/Index";
+import Frame from "./components/Frame/index";
 import { isLogined } from "./utils/auth";
 function App() {
   return isLogined ? (

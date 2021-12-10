@@ -1,3 +1,11 @@
-.bg_red{
-	background-color: crimson;
+.bg_red {
+  background-color: crimson;
+}
+
+.button-area button {
+  margin-right: 10px;
+}
+
+.k-pdf-export {
+  background-color: #282c34;
 }

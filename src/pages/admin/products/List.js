@@ -1,26 +1,28 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { Card, Button, Table, Popconfirm, message } from "antd";
 import { connect } from "react-redux";
 import { loadProduct } from "../../../store/actions/product";
 import { listApi, deleteOne, modifyOne } from "../../../services/products";
 import { serverUrl } from "../../../utils/config";
 import "./list.css";
+import { PDFExport, savePDF } from "@progress/kendo-react-pdf";
 
 function List(props) {
   const { list, page, total } = props || {};
   const per = 5;
+  const pdfExportComponent = useRef(null);
   //定义局部状态
   // const [dataSource, setDataSource] = useState([]);
   // const [total, setTotal] = useState(0);
   // const [currentPage, setCurrentPage] = useState(1);
 
-  const asyncLoadProduct = (page)=>{
+  const asyncLoadProduct = (page) => {
     props.dispatch(
       loadProduct({
         page,
       })
     );
-  }
+  };
   useEffect(() => {
     asyncLoadProduct(1);
     // listApi().then((res) => {
@@ -29,6 +31,14 @@ function List(props) {
     // });
   }, []);
 
+  const handleExportWithComponent = (event) => {
+    pdfExportComponent.current.save();
+  };
+
+  /* other ref: contentArea */
+  // const handleExportWithFunction = (event) => {
+  //   savePDF(contentArea.current, { paperSize: "A4" });
+  // };
 
   const loadData = (page, per) => {
     asyncLoadProduct(page);
@@ -127,6 +137,7 @@ function List(props) {
       },
     },
   ];
+
   return (
     <Card
       title="Product List"
@@ -139,19 +150,29 @@ function List(props) {
         </Button>
       }
     >
-      <Table
-        rowKey={(record) => record._id}
-        rowClassName={(record) => (record.onSale ? "" : "bg_red")}
-        columns={columns}
-        bordered
-        // dataSource={dataSource}
-        dataSource={list}
-        pagination={{
-          total,
-          defaultPageSize: per,
-          onChange: loadData,
-        }}
-      />
+      <PDFExport ref={pdfExportComponent} paperSize="A4">
+        <Table
+          rowKey={(record) => record._id}
+          rowClassName={(record) => (record.onSale ? "" : "bg_red")}
+          columns={columns}
+          bordered
+          // dataSource={dataSource}
+          dataSource={list}
+          pagination={{
+            total,
+            defaultPageSize: per,
+            onChange: loadData,
+          }}
+        />
+      </PDFExport>
+      <div className="button-area">
+        <Button onClick={handleExportWithComponent}>
+          Export with Component
+        </Button>
+        <Button /*onClick={handleExportWithFunction}*/>
+          Export with Method
+        </Button>
+      </div>
     </Card>
   );
 }
